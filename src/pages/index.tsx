@@ -558,7 +558,7 @@ function GitHubStatsSection() {
               <div className="mt-8">
                 <LanguageBar data={data.topLanguages} />
               </div>
-d
+
               {/* Latest repos */}
               {data.latest && data.latest.length > 0 && (
                 <div className="mt-8">
