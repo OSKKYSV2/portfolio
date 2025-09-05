@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build && next export"
-  },
+  "dev": "next dev",
+  "build": "next build"
+},
   "dependencies": {
     "framer-motion": "^12.23.12",
     "next": "15.3.2",
