@@ -1,11 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Klíčové pro Cloudflare Pages — vytvoří čistý statický web
-  output: "export",
+  output: "export",               // důležité pro Cloudflare Pages
   reactStrictMode: true,
-
-  // Ignorujeme ESLint a TS chyby během buildu
+  images: {
+    unoptimized: true,            // ⬅️ vypne optimalizaci obrázků
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
