@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
   "dev": "next dev",
-  "build": "npx @cloudflare/next-on-pages"
+  "build": "npx @cloudflare/next-on-pages --experimental-minify"
 },
+
 
   "dependencies": {
     "framer-motion": "^12.23.12",

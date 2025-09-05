@@ -1,12 +1,8 @@
 import type { NextConfig } from "next";
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  output: 'standalone',
+const nextConfig: NextConfig = {
+  output: "export", // ⚠️ DŮLEŽITÉ! Pro Cloudflare Pages
+  reactStrictMode: true,
 };
 
 export default nextConfig;
-
-
-
-
