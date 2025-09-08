@@ -631,11 +631,12 @@ export default function HomePage() {
 
           {/* Neon scanner line */}
           <m.div
-            initial={{ x: 0 }}
-            animate={{ x: [0, 80, 0] }}
-            transition={{ duration: 2.2, ease: 'easeInOut', repeat: Infinity }}
-            className="mt-4 h-[5px] w-100 rounded-full bg-gradient-to-r from-red-500 via-rose-400 to-red-500 shadow-[0_0_28px_8px_rgba(255,0,69,0.9)]"
-          />
+  initial={{ x: 0 }}
+  animate={{ x: [0, 80, 0] }}
+  transition={{ duration: 2.2, ease: 'easeInOut', repeat: Infinity }}
+  className="mt-4 h-[5px] w-60 sm:w-60 md:w-80 lg:w-96 rounded-full bg-gradient-to-r from-red-500 via-rose-400 to-red-500 shadow-[0_0_28px_8px_rgba(255,0,69,0.9)]"
+/>
+
 
           <m.p {...fadeUp} className="mt-6 max-w-xl text-lg text-white/75">
             AHOY! Vytvářím webové aplikace, které prostě fungují. Od nápadu po hotový produkt – důraz na rychlost,
