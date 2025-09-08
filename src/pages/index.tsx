@@ -38,7 +38,7 @@ const PROJECTS = [
     title: 'Moodify',
     blurb: 'Doporučená hudba na základě vaší nálady',
     tech: ['Next.js', 'PostgreSQL', 'NextAuth'],
-    href: 'http://localhost:3001/',
+    href: 'https://0d6a2c0b.moodify-main.pages.dev',
   },
   {
     title: 'OskKYS V1, V2',
