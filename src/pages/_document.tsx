@@ -15,7 +15,7 @@ export default class MyDocument extends Document {
           <meta name="theme-color" content="#7B4DFF" />
           <meta
             name="description"
-            content="Moodify — hudební náladový doporučovač s neonovým vibe."
+            content="Tvořím moderní webové aplikace. Od nápadu po hotový produkt."
           />
 
             <link rel="icon" href="/favicon.ico?v=7" sizes="any" />
