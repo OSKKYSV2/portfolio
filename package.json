@@ -2,10 +2,14 @@
   "name": "my-brainrot-web",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
+   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "pages:build": "npx @cloudflare/next-on-pages@latest"
+  },
+  "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.7.0",
+    "wrangler": "^3.72.2"
   },
   "dependencies": {
     "framer-motion": "^12.23.12",
