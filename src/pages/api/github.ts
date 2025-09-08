@@ -35,6 +35,7 @@ type ApiResponse = {
   }[];
 };
 
+
 const TTL_MS = 1000 * 60 * 15; // cache 15 minut
 let CACHE: { at: number; data: ApiResponse } | null = null;
 
