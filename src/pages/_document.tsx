@@ -5,6 +5,12 @@ export default class MyDocument extends Document {
     return (
       <Html lang="cs">
         <Head>
+          {/* Google Search Console verification */}
+          <meta
+            name="google-site-verification"
+            content="RgLW13GtoNfsDQadebwkaN6g1GLccMHYOnnjR_6F9jA"
+          />
+
           {/* Google Fonts – Poppins + Orbitron */}
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
           <link
@@ -18,8 +24,8 @@ export default class MyDocument extends Document {
             content="Tvořím moderní webové aplikace. Od nápadu po hotový produkt."
           />
 
-            <link rel="icon" href="/favicon.ico?v=7" sizes="any" />
-  <link rel="shortcut icon" href="/favicon.ico?v=7" type="image/x-icon" />
+          <link rel="icon" href="/favicon.ico?v=7" sizes="any" />
+          <link rel="shortcut icon" href="/favicon.ico?v=7" type="image/x-icon" />
         </Head>
         <body className="bg-bg text-gray-100">
           <Main />
