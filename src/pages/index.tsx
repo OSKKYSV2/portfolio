@@ -2,12 +2,18 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
-import { LazyMotion, domAnimation, m, useMotionValue, useTransform, animate, useInView } from 'framer-motion';
+import {
+  LazyMotion,
+  domAnimation,
+  m,
+  useMotionValue,
+  useTransform,
+  animate,
+  useInView,
+} from 'framer-motion';
 
 // ======= Data ===========================================
-const TECH = [
-  'React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Node.js', 'C++', 'SQL', 'C#'
-];
+const TECH = ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Node.js', 'C++', 'SQL', 'C#'];
 
 const PROJECTS = [
   {
@@ -32,7 +38,8 @@ const PROJECTS = [
     title: 'Dreamify',
     blurb: 'Vizualizace snů na základě vašeho popisu pomocí AI',
     tech: ['Next.js', 'PostgreSQL', 'NextAuth', 'Tailwind', 'API'],
-    href: 'http://localhost:3001/',
+    // ❌ původně http://localhost:3001
+    href: '#', // dokud nebude veřejná HTTPS URL
   },
   {
     title: 'Moodify',
@@ -178,24 +185,30 @@ function MagneticButton({
 function TechMarquee({ speed = 16 }: { speed?: number }) {
   return (
     <div className="relative mt-8">
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-24 z-10 bg-gradient-to-r from-black to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-24 z-10 bg-gradient-to-l from-black to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-black to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-black to-transparent" />
       <div className="overflow-hidden">
         <m.div
           className="flex gap-4"
           animate={{ x: ['0%', '-50%'] }}
           transition={{ duration: speed, ease: 'linear', repeat: Infinity }}
         >
-          <div className="flex gap-4 shrink-0">
+          <div className="flex shrink-0 gap-4">
             {TECH.map((t) => (
-              <span key={`a-${t}`} className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/90">
+              <span
+                key={`a-${t}`}
+                className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/90"
+              >
                 {t}
               </span>
             ))}
           </div>
-          <div className="flex gap-4 shrink-0" aria-hidden="true">
+          <div className="flex shrink-0 gap-4" aria-hidden="true">
             {TECH.map((t) => (
-              <span key={`b-${t}`} className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/90">
+              <span
+                key={`b-${t}`}
+                className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/90"
+              >
                 {t}
               </span>
             ))}
@@ -207,41 +220,42 @@ function TechMarquee({ speed = 16 }: { speed?: number }) {
 }
 
 // Skill bar
-function SkillBar({
-  name,
-  pct,
-  color,
-}: {
-  name: string;
-  pct: number;
-  color: string;
-}) {
+function SkillBar({ name, pct, color }: { name: string; pct: number; color: string }) {
   return (
     <div>
-      <div className="flex justify-between mb-1">
-        <span className="text-white/90 text-sm">{name}</span>
-        <span className="text-white/70 text-sm">{pct}%</span>
+      <div className="mb-1 flex justify-between">
+        <span className="text-sm text-white/90">{name}</span>
+        <span className="text-sm text-white/70">{pct}%</span>
       </div>
       <div className="h-3 rounded-full bg-white/10">
         <div
           className={`h-3 rounded-full bg-gradient-to-r ${color} shadow-[0_0_10px_rgba(239,68,68,0.6)]`}
           style={{ width: `${pct}%` }}
-        ></div>
+        />
       </div>
     </div>
   );
 }
 
-// Project card
+// Project card (bezpečné externí linky)
 function ProjectCard({
-  title, blurb, tech, href,
+  title,
+  blurb,
+  tech,
+  href,
 }: {
-  title: string; blurb: string; tech: string[]; href?: string;
+  title: string;
+  blurb: string;
+  tech: string[];
+  href?: string;
 }) {
+  const url = href || '#';
+  const isExternal = /^https?:\/\//i.test(url);
   return (
     <a
-      href={href || '#'}
-      className="group block rounded-2xl border border-white/20 bg-white/10 p-6 backdrop-blur-lg shadow-[0_0_20px_rgba(255,0,69,0.18)] hover:shadow-[0_0_40px_rgba(255,0,69,0.35)] transition"
+      href={url}
+      {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      className="group block rounded-2xl border border-white/20 bg-white/10 p-6 shadow-[0_0_20px_rgba(255,0,69,0.18)] backdrop-blur-lg transition hover:shadow-[0_0_40px_rgba(255,0,69,0.35)]"
     >
       <div className="flex items-start justify-between gap-4">
         <h3 className="text-lg font-semibold text-white">{title}</h3>
@@ -252,7 +266,10 @@ function ProjectCard({
       <p className="mt-3 text-white/75">{blurb}</p>
       <div className="mt-4 flex flex-wrap gap-2">
         {tech.map((t) => (
-          <span key={t} className="rounded-full bg-white/10 px-2 py-1 text-xs text-white/90 ring-1 ring-white/10">
+          <span
+            key={t}
+            className="rounded-full bg-white/10 px-2 py-1 text-xs text-white/90 ring-1 ring-white/10"
+          >
             {t}
           </span>
         ))}
@@ -280,11 +297,7 @@ function ProjectsCarousel() {
       <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-black to-transparent" />
       <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-black to-transparent" />
       <div className="overflow-hidden">
-        <m.div
-          drag="x"
-          style={{ x: useTransform(x, (v) => `calc(${v}% )`) }}
-          className="flex w-max gap-4"
-        >
+        <m.div drag="x" style={{ x: useTransform(x, (v) => `calc(${v}% )`) }} className="flex w-max gap-4">
           <div className="flex shrink-0 gap-4">
             {PROJECTS.map((p) => (
               <div key={`first-${p.title}`} className="w-[320px]">
@@ -324,30 +337,37 @@ type GithubPayload = {
   };
   topLanguages: { name: string; count: number }[];
   repoCount: number;
-  latest?: { name: string; url: string; description: string | null; stars: number; forks: number; language: string | null }[];
+  latest?: {
+    name: string;
+    url: string;
+    description: string | null;
+    stars: number;
+    forks: number;
+    language: string | null;
+  }[];
 };
 
 function Counter({ to, className }: { to: number; className?: string }) {
   const mv = useMotionValue(0);
   const rounded = useTransform(mv, (v) => Math.round(v).toLocaleString());
   const anchor = useRef<HTMLSpanElement | null>(null);
-  const inView = useInView(anchor, { once: true, margin: "-20% 0px -20% 0px" });
+  const inView = useInView(anchor, { once: true, margin: '-20% 0px -20% 0px' });
 
   useEffect(() => {
-    if (inView) animate(mv, to, { duration: 1, ease: "easeOut" });
+    if (inView) animate(mv, to, { duration: 1, ease: 'easeOut' });
   }, [inView, to]);
 
   return (
     <span ref={anchor}>
-      <m.span className={className}>{rounded as unknown as string}</m.span>
+      <m.span className={className}>{(rounded as unknown) as string}</m.span>
     </span>
   );
 }
 
 function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) {
   return (
-    <div className="group relative rounded-2xl bg-white/[0.04] p-5 ring-1 ring-white/10 backdrop-blur-md overflow-hidden">
-      <div className="pointer-events-none absolute -inset-px rounded-2xl bg-gradient-to-tr from-rose-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition" />
+    <div className="group relative overflow-hidden rounded-2xl bg-white/[0.04] p-5 ring-1 ring-white/10 backdrop-blur-md">
+      <div className="pointer-events-none absolute -inset-px rounded-2xl bg-gradient-to-tr from-rose-500/10 via-transparent to-transparent opacity-0 transition group-hover:opacity-100" />
       <div className="flex items-center gap-3">
         <div className="rounded-xl bg-white/10 p-2 ring-1 ring-white/15">{icon}</div>
         <div className="text-sm text-white/70">{label}</div>
@@ -369,7 +389,12 @@ const icons = {
   ),
   star: (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-white/90">
-      <path d="M12 3l2.7 5.47 6.03.88-4.36 4.25 1.03 6.01L12 17.77 6.6 19.6l1.03-6.01L3.27 9.35l6.03-.88L12 3z" stroke="currentColor" strokeWidth="1.4" fill="currentColor" />
+      <path
+        d="M12 3l2.7 5.47 6.03.88-4.36 4.25 1.03 6.01L12 17.77 6.6 19.6l1.03-6.01L3.27 9.35l6.03-.88L12 3z"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        fill="currentColor"
+      />
     </svg>
   ),
   fork: (
@@ -398,20 +423,20 @@ const icons = {
 };
 
 const langColors: Record<string, string> = {
-  TypeScript: "#3178C6",
-  JavaScript: "#F1E05A",
-  HTML: "#E44D26",
-  CSS: "#563D7C",
-  Python: "#3572A5",
-  Go: "#00ADD8",
-  Rust: "#DEA584",
+  TypeScript: '#3178C6',
+  JavaScript: '#F1E05A',
+  HTML: '#E44D26',
+  CSS: '#563D7C',
+  Python: '#3572A5',
+  Go: '#00ADD8',
+  Rust: '#DEA584',
 };
 
 function LanguageBar({ data }: { data: { name: string; count: number }[] }) {
   const total = data.reduce((s, d) => s + d.count, 0) || 1;
   return (
     <div className="rounded-2xl bg-white/[0.04] p-5 ring-1 ring-white/10 backdrop-blur-md">
-      <div className="mb-3 text-white font-semibold">Top jazyky</div>
+      <div className="mb-3 font-semibold text-white">Top jazyky</div>
       <div className="h-3 w-full overflow-hidden rounded-full ring-1 ring-white/10">
         <div className="flex h-full">
           {data.map((d) => (
@@ -420,7 +445,7 @@ function LanguageBar({ data }: { data: { name: string; count: number }[] }) {
               className="h-full"
               style={{
                 width: `${(d.count / total) * 100}%`,
-                background: `linear-gradient(90deg, ${langColors[d.name] ?? "rgba(255,255,255,0.6)"} 0%, transparent 140%)`,
+                background: `linear-gradient(90deg, ${langColors[d.name] ?? 'rgba(255,255,255,0.6)'} 0%, transparent 140%)`,
               }}
               title={`${d.name} — ${d.count} repo`}
             />
@@ -432,7 +457,7 @@ function LanguageBar({ data }: { data: { name: string; count: number }[] }) {
           <span
             key={d.name}
             className="rounded-full px-3 py-1 text-xs text-white/90 ring-1 ring-white/15"
-            style={{ background: `${(langColors[d.name] ?? "#999")}22` }}
+            style={{ background: `${(langColors[d.name] ?? '#999')}22` }}
           >
             {d.name} • {d.count}
           </span>
@@ -442,26 +467,27 @@ function LanguageBar({ data }: { data: { name: string; count: number }[] }) {
   );
 }
 
-function RepoCard({ r }: { r: NonNullable<GithubPayload["latest"]>[number] }) {
+function RepoCard({ r }: { r: NonNullable<GithubPayload['latest']>[number] }) {
   return (
     <a
       href={r.url}
       target="_blank"
       rel="noreferrer"
-      className="group relative rounded-2xl bg-white/[0.04] p-5 ring-1 ring-white/10 backdrop-blur-md hover:bg-white/[0.06] transition"
+      className="group relative rounded-2xl bg-white/[0.04] p-5 ring-1 ring-white/10 backdrop-blur-md transition hover:bg-white/[0.06]"
     >
-      <div className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition
-                      bg-[conic-gradient(at_120%_-20%,rgba(244,63,94,.25),transparent_30%)]" />
+      <div className="pointer-events-none absolute -inset-px rounded-2xl bg-[conic-gradient(at_120%_-20%,rgba(244,63,94,.25),transparent_30%)] opacity-0 transition group-hover:opacity-100" />
       <div className="flex items-center justify-between">
-        <div className="text-white font-semibold">{r.name}</div>
-        <div className="text-xs text-white/60">{r.language ?? ""}</div>
+        <div className="font-semibold text-white">{r.name}</div>
+        <div className="text-xs text-white/60">{r.language ?? ''}</div>
       </div>
-      {r.description && (
-        <p className="mt-2 text-sm text-white/70 line-clamp-2">{r.description}</p>
-      )}
+      {r.description && <p className="mt-2 line-clamp-2 text-sm text-white/70">{r.description}</p>}
       <div className="mt-3 flex items-center gap-4 text-sm text-white/70">
-        <span className="inline-flex items-center gap-1">{icons.star} {r.stars}</span>
-        <span className="inline-flex items-center gap-1">{icons.fork} {r.forks}</span>
+        <span className="inline-flex items-center gap-1">
+          {icons.star} {r.stars}
+        </span>
+        <span className="inline-flex items-center gap-1">
+          {icons.fork} {r.forks}
+        </span>
       </div>
     </a>
   );
@@ -475,11 +501,11 @@ function GitHubStatsSection() {
     let mounted = true;
     (async () => {
       try {
-        const res = await fetch("/api/github");
+        const res = await fetch('/api/github');
         const json = await res.json();
         if (!mounted) return;
         if (json?.ok === false) {
-          setError(json.detail || json.error || "GitHub API error");
+          setError(json.detail || json.error || 'GitHub API error');
           setData(null);
         } else {
           setData(json);
@@ -495,45 +521,41 @@ function GitHubStatsSection() {
   }, []);
 
   return (
-    <section id="github" className="mx-auto max-w-6xl px-6 pb-24 mt-32 relative">
+    <section id="github" className="relative mx-auto mt-32 max-w-6xl px-6 pb-24">
       {/* subtle gradient ring container */}
-      <div className="relative rounded-3xl p-1 bg-gradient-to-br from-rose-500/40 via-white/10 to-transparent">
-        <div className="rounded-3xl bg-black/60 ring-1 ring-white/10 backdrop-blur-xl p-6 md:p-8">
+      <div className="relative rounded-3xl bg-gradient-to-br from-rose-500/40 via-white/10 to-transparent p-1">
+        <div className="rounded-3xl bg-black/60 p-6 ring-1 ring-white/10 backdrop-blur-xl md:p-8">
           {/* Header */}
           <div className="flex items-center justify-between gap-6">
             <div className="flex items-center gap-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={data?.profile?.avatar_url || "/vercel.svg"}
+                src={data?.profile?.avatar_url || '/vercel.svg'}
                 alt="Avatar"
                 className="h-14 w-14 rounded-full ring-2 ring-rose-500/40"
               />
               <div>
-                <div className="text-white font-semibold">
-                  {data?.profile?.name || data?.profile?.login || "—"}
+                <div className="font-semibold text-white">
+                  {data?.profile?.name || data?.profile?.login || '—'}
                 </div>
-                <div className="text-sm text-white/70">
-                  @{data?.profile?.login || "—"}
-                </div>
+                <div className="text-sm text-white/70">@{data?.profile?.login || '—'}</div>
               </div>
             </div>
 
             <a
-              href={data?.profile?.html_url || "#"}
+              href={data?.profile?.html_url || '#'}
               target="_blank"
-              rel="noreferrer"
-              className="rounded-xl bg-gradient-to-r from-rose-500 to-red-500 px-4 py-2 text-white font-semibold shadow-[0_0_18px_rgba(239,68,68,0.6)] hover:shadow-[0_0_36px_rgba(239,68,68,0.9)]"
+              rel="noopener noreferrer"
+              className="rounded-xl bg-gradient-to-r from-rose-500 to-red-500 px-4 py-2 font-semibold text-white shadow-[0_0_18px_rgba(239,68,68,0.6)] hover:shadow-[0_0_36px_rgba(239,68,68,0.9)]"
             >
               Otevřít GitHub
             </a>
           </div>
 
           {/* Loading / error */}
-          {error && (
-            <p className="mt-6 text-rose-300 text-center">Chyba při načítání GitHub dat: {error}</p>
-          )}
+          {error && <p className="mt-6 text-center text-rose-300">Chyba při načítání GitHub dat: {error}</p>}
           {!error && !data && (
-            <div className="mt-8 grid gap-4 md:grid-cols-3 animate-pulse">
+            <div className="mt-8 grid animate-pulse gap-4 md:grid-cols-3">
               <div className="h-28 rounded-2xl bg-white/5" />
               <div className="h-28 rounded-2xl bg-white/5" />
               <div className="h-28 rounded-2xl bg-white/5" />
@@ -562,7 +584,7 @@ function GitHubStatsSection() {
               {/* Latest repos */}
               {data.latest && data.latest.length > 0 && (
                 <div className="mt-8">
-                  <div className="mb-3 text-white font-semibold">Poslední repozitáře</div>
+                  <div className="mb-3 font-semibold text-white">Poslední repozitáře</div>
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {data.latest.map((r) => (
                       <RepoCard key={r.url} r={r} />
@@ -585,13 +607,16 @@ export default function HomePage() {
       <Head>
         <title>OSKAR — Full-Stack Developer</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="Tvořím moderní webové aplikace. Od nápadu po hotový produkt." />
+        <meta
+          name="description"
+          content="Tvořím moderní webové aplikace. Od nápadu po hotový produkt."
+        />
       </Head>
 
       {/* Background */}
       <div className="fixed inset-0 -z-10 bg-black">
-        <div className="absolute inset-0 opacity-40 [background:radial-gradient(1000px_600px_at_70%_10%,rgba(239,68,68,0.35),transparent_60%),radial-gradient(800px_500px_at_20%_30%,rgba(244,63,94,0.3),transparent_60%)] animate-pulse"></div>
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.045)_1px,transparent_1px)] bg-[size:44px_44px]"></div>
+        <div className="absolute inset-0 animate-pulse opacity-40 [background:radial-gradient(1000px_600px_at_70%_10%,rgba(239,68,68,0.35),transparent_60%),radial-gradient(800px_500px_at_20%_30%,rgba(244,63,94,0.3),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.045)_1px,transparent_1px)] bg-[size:44px_44px]" />
       </div>
 
       {/* Neon cursor particles */}
@@ -601,11 +626,19 @@ export default function HomePage() {
         {/* NAV */}
         <div className="sticky top-0 z-50 w-full border-b border-white/10 bg-black/40 backdrop-blur">
           <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-            <a href="#home" className="text-lg font-semibold tracking-tight text-white md:text-4xl">OSKAR</a>
+            <a href="#home" className="text-lg font-semibold tracking-tight text-white md:text-4xl">
+              OSKAR
+            </a>
             <nav className="hidden gap-6 md:flex">
-              <a href="#about" className="text-white/80 hover:text-white">O mně</a>
-              <a href="#projects" className="text-white/80 hover:text-white">Projekty</a>
-              <a href="#contact" className="text-white/80 hover:text-white">Kontakt</a>
+              <a href="#about" className="text-white/80 hover:text-white">
+                O mně
+              </a>
+              <a href="#projects" className="text-white/80 hover:text-white">
+                Projekty
+              </a>
+              <a href="#contact" className="text-white/80 hover:text-white">
+                Kontakt
+              </a>
             </nav>
             <MagneticButton href="#contact">Pojďme spolupracovat</MagneticButton>
           </div>
@@ -614,109 +647,116 @@ export default function HomePage() {
         {/* HERO */}
         <header id="home" className="mx-auto max-w-6xl px-6 pb-12 pt-20">
           <div className="flex items-center gap-8">
-            <m.h1
-              {...fadeUp}
-              className="text-5xl font-extrabold tracking-tight text-white md:text-7xl"
-            >
+            <m.h1 {...fadeUp} className="text-5xl font-extrabold tracking-tight text-white md:text-7xl">
               FULL STACK{' '}
               <span className="text-rose-400 [text-shadow:_0_0_8px_rgba(255,0,0,0.9),_0_0_20px_rgba(255,0,0,0.8),_0_0_40px_rgba(255,0,0,0.6)]">
                 DEVELOPER
               </span>
             </m.h1>
 
-            <div className="relative h-28 w-28 md:h-46 md:w-48 overflow-hidden rounded-full border-4 border-red-500 shadow-[0_0_80px_15px_rgba(239,68,68,0.8)] -translate-y-1">
-              <Image src="/profile.jpg" alt="Profile" fill priority sizes="(max-width: 768px) 7rem, 9rem" className="object-cover" />
+            <div className="relative -translate-y-1 h-28 w-28 overflow-hidden rounded-full border-4 border-red-500 shadow-[0_0_80px_15px_rgba(239,68,68,0.8)] md:h-46 md:w-48">
+              <Image
+                src="/profile.jpg"
+                alt="Profile"
+                fill
+                priority
+                sizes="(max-width: 768px) 7rem, 9rem"
+                className="object-cover"
+              />
             </div>
           </div>
 
           {/* Neon scanner line */}
           <m.div
-  initial={{ x: 0 }}
-  animate={{ x: [0, 80, 0] }}
-  transition={{ duration: 2.2, ease: 'easeInOut', repeat: Infinity }}
-  className="mt-4 h-[5px] w-60 sm:w-60 md:w-80 lg:w-96 rounded-full bg-gradient-to-r from-red-500 via-rose-400 to-red-500 shadow-[0_0_28px_8px_rgba(255,0,69,0.9)]"
-/>
-
+            initial={{ x: 0 }}
+            animate={{ x: [0, 80, 0] }}
+            transition={{ duration: 2.2, ease: 'easeInOut', repeat: Infinity }}
+            className="mt-4 h-[5px] w-60 rounded-full bg-gradient-to-r from-red-500 via-rose-400 to-red-500 shadow-[0_0_28px_8px_rgba(255,0,69,0.9)] sm:w-60 md:w-80 lg:w-96"
+          />
 
           <m.p {...fadeUp} className="mt-6 max-w-xl text-lg text-white/75">
-            AHOY! Vytvářím webové aplikace, které prostě fungují. Od nápadu po hotový produkt – důraz na rychlost,
-            čistý kód a krásné UI.
+            AHOY! Vytvářím webové aplikace, které prostě fungují. Od nápadu po hotový produkt – důraz
+            na rychlost, čistý kód a krásné UI.
           </m.p>
 
           <TechMarquee speed={16} />
         </header>
 
         {/* ABOUT + SKILLS */}
-        <section
-          id="about"
-          className="mx-auto max-w-6xl px-6 py-20 flex flex-col gap-12 mt-24"
-        >
-          <m.h2
-            {...fadeUp}
-            className="text-3xl font-semibold tracking-tight text-white text-center md:text-left mt-110"
-          >
+        <section id="about" className="mx-auto mt-24 flex max-w-6xl flex-col gap-12 px-6 py-20">
+          <m.h2 {...fadeUp} className="mt-110 text-center text-3xl font-semibold tracking-tight text-white md:text-left">
             O mně
           </m.h2>
 
-          <div className="flex flex-col md:flex-row items-start gap-12">
+          <div className="flex flex-col items-start gap-12 md:flex-row">
             {/* LEFT SIDE */}
             <div className="flex-1 space-y-6">
-              <p className="text-lg text-white/80 leading-relaxed">
-                Jsem vývojář s více než{" "}
-                <span className="font-semibold text-white">2 roky zkušeností</span> v oblasti
-                webového vývoje a Roblox developingu. Specializuji se na{" "}
-                <span className="font-semibold text-rose-400">C++</span>,{" "}
-                <span className="font-semibold text-rose-400">Next.js</span>,{" "}
-                <span className="font-semibold text-rose-400">C#</span> a tvorbu
-                kvalitních řešení.
+              <p className="text-lg leading-relaxed text-white/80">
+                Jsem vývojář s více než{' '}
+                <span className="font-semibold text-white">2 roky zkušeností</span> v oblasti webového
+                vývoje a Roblox developingu. Specializuji se na{' '}
+                <span className="font-semibold text-rose-400">C++</span>,{' '}
+                <span className="font-semibold text-rose-400">Next.js</span>,{' '}
+                <span className="font-semibold text-rose-400">C#</span> a tvorbu kvalitních řešení.
               </p>
             </div>
 
             {/* RIGHT SIDE */}
-            <div className="flex-1 space-y-6 w-full">
+            <div className="w-full flex-1 space-y-6">
               <h3 className="text-2xl font-semibold text-white">Dovednosti</h3>
-              <SkillBar name="Frontend Development" pct={90} color="from-red-500 via-rose-400 to-red-500 shadow-[0_0_18px_8px_rgba(200,0,69,0.9)]" />
-              <SkillBar name="Backend Development" pct={68} color="from-red-500 via-rose-400 to-red-500 shadow-[0_0_18px_8px_rgba(200,0,69,0.9)]" />
-              <SkillBar name="Roblox Developing" pct={32} color="from-red-500 via-rose-400 to-red-500 shadow-[0_0_18px_8px_rgba(200,0,69,0.9)]" />
-              <SkillBar name="UI/UX Design" pct={75} color="from-red-500 via-rose-400 to-red-500 shadow-[0_0_18px_8px_rgba(200,0,69,0.9)]" />
+              <SkillBar
+                name="Frontend Development"
+                pct={90}
+                color="from-red-500 via-rose-400 to-red-500 shadow-[0_0_18px_8px_rgba(200,0,69,0.9)]"
+              />
+              <SkillBar
+                name="Backend Development"
+                pct={68}
+                color="from-red-500 via-rose-400 to-red-500 shadow-[0_0_18px_8px_rgba(200,0,69,0.9)]"
+              />
+              <SkillBar
+                name="Roblox Developing"
+                pct={32}
+                color="from-red-500 via-rose-400 to-red-500 shadow-[0_0_18px_8px_rgba(200,0,69,0.9)]"
+              />
+              <SkillBar
+                name="UI/UX Design"
+                pct={75}
+                color="from-red-500 via-rose-400 to-red-500 shadow-[0_0_18px_8px_rgba(200,0,69,0.9)]"
+              />
             </div>
           </div>
         </section>
 
         {/* CTA */}
-        <section className="relative w-full mt-28 mb-28 flex justify-center">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-3xl h-[320px] rounded-3xl bg-red-600/40 blur-[24px] opacity-50" />
-          <div className="relative max-w-3xl mx-auto text-center px-8 py-16 rounded-3xl bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_0_30px_rgba(239,68,68,0.5)]">
+        <section className="relative mt-28 mb-28 flex w-full justify-center">
+          <div className="absolute left-1/2 top-1/2 h-[320px] w-[90%] max-w-3xl -translate-x-1/2 -translate-y-1/2 rounded-3xl bg-red-600/40 opacity-50 blur-[24px]" />
+          <div className="relative mx-auto max-w-3xl rounded-3xl border border-white/10 bg-black/60 px-8 py-16 shadow-[0_0_30px_rgba(239,68,68,0.5)] backdrop-blur-xl">
             <m.h2
               {...fadeUp}
-              className="text-4xl md:text-5xl font-extrabold text-white tracking-tight drop-shadow-[0_0_10px_rgba(255,0,69,0.6)]"
+              className="text-4xl font-extrabold tracking-tight text-white drop-shadow-[0_0_10px_rgba(255,0,69,0.6)] md:text-5xl"
             >
-              Máte <span className="text-rose-400">nápad</span> na projekt?  
-              <br />
+              Máte <span className="text-rose-400">nápad</span> na projekt? <br />
               Pojďme ho <span className="text-rose-500">proměnit v realitu</span>! 🚀
             </m.h2>
 
-            <m.p
-              {...fadeUp}
-              className="mt-6 text-lg md:text-xl text-white/80 max-w-2xl mx-auto leading-relaxed"
-            >
-              Připravím pro vás <span className="text-white">moderní web</span>,  
-              <span className="text-white"> unikátní design</span> a  
-              <span className="text-white"> rychlý kód</span>,  
-              který zaujme na první pohled.
+            <m.p {...fadeUp} className="mx-auto mt-6 max-w-2xl text-lg text-white/80 md:text-xl">
+              Připravím pro vás <span className="text-white">moderní web</span>,
+              <span className="text-white"> unikátní design</span> a
+              <span className="text-white"> rychlý kód</span>, který zaujme na první pohled.
             </m.p>
 
             <div className="mt-10">
-              <MagneticButton href="#contact">
-                🚀 Začít spolupráci
-              </MagneticButton>
+              <MagneticButton href="#contact">🚀 Začít spolupráci</MagneticButton>
             </div>
           </div>
         </section>
 
         {/* Projects carousel */}
-        <section id="projects" className="mx-auto max-w-6xl px-6 py-16 mt-55">
-          <m.h2 {...fadeUp} className="text-3xl font-semibold tracking-tight text-white">Moje projekty</m.h2>
+        <section id="projects" className="mx-auto mt-55 max-w-6xl px-6 py-16">
+          <m.h2 {...fadeUp} className="text-3xl font-semibold tracking-tight text-white">
+            Moje projekty
+          </m.h2>
           <ProjectsCarousel />
         </section>
 
@@ -724,27 +764,38 @@ export default function HomePage() {
         <GitHubStatsSection />
 
         {/* CONTACT */}
-        <section id="contact" className="mx-auto max-w-6xl px-6 pb-20 mt-25">
-          <m.h2 {...fadeUp} className="text-3xl font-semibold tracking-tight text-white">Kontakt</m.h2>
+        <section id="contact" className="mx-auto mt-25 max-w-6xl px-6 pb-20">
+          <m.h2 {...fadeUp} className="text-3xl font-semibold tracking-tight text-white">
+            Kontakt
+          </m.h2>
           <div className="mt-8 grid gap-6 md:grid-cols-3">
             <div className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">
               <div className="text-sm text-white/60">Email</div>
               <div className="mt-1 text-white">oskk1s@seznam.cz</div>
-              <a href="mailto:oskk1s@seznam.cz" className="mt-4 inline-block rounded-xl bg-white/10 px-4 py-2 text-white hover:bg-white/15">
+              <a
+                href="mailto:oskk1s@seznam.cz"
+                className="mt-4 inline-block rounded-xl bg-white/10 px-4 py-2 text-white hover:bg-white/15"
+              >
                 Napište mi
               </a>
             </div>
             <div className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">
               <div className="text-sm text-white/60">Discord</div>
               <div className="mt-1 text-white">pozky25</div>
-              <a href="discord/pozky25" className="mt-4 inline-block rounded-xl bg-white/10 px-4 py-2 text-white hover:bg-white/15">
-                Zkopírovat
+              {/* ✅ oficiální URL/externí odkaz */}
+              <a
+                href="https://discordapp.com/users/pozky25"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-block rounded-xl bg-white/10 px-4 py-2 text-white hover:bg-white/15"
+              >
+                Otevřít
               </a>
             </div>
             <div className="rounded-2xl bg-gradient-to-br from-red-500 to-rose-500 p-[1px]">
               <div className="h-full rounded-2xl bg-black p-6">
                 <div className="text-sm text-white/80">Kontaktujte mě ještě dnes</div>
-                <div className="mt-6 text-white"></div>
+                <div className="mt-6 text-white" />
                 <MagneticButton href="mailto:oskk1s@seznam.cz">🚀 Pojďme spolupracovat</MagneticButton>
               </div>
             </div>
@@ -757,9 +808,13 @@ export default function HomePage() {
         <div className="flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-white/60 md:flex-row">
           <div>© {new Date().getFullYear()} Oskar — Všechna práva vyhrazena</div>
           <div className="flex items-center gap-4">
-            <a href="#" className="hover:text-white">CZ</a>
+            <a href="#" className="hover:text-white">
+              CZ
+            </a>
             <span className="opacity-20">/</span>
-            <a href="#" className="hover:text-white">EN</a>
+            <a href="#" className="hover:text-white">
+              EN
+            </a>
           </div>
         </div>
       </footer>
